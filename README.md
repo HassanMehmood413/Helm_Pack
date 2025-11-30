@@ -1,4 +1,4 @@
-# 🚀 Helm Chart for proj_01
+# 🚀 Helm Chart
 
 This Helm chart deploys your FastAPI application with PostgreSQL database.
 

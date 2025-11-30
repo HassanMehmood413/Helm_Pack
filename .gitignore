@@ -8,13 +8,13 @@ __pycache__/
 alembic/versions/
 *.sqlite
 
-manifest
-.manifest
-poetry.lock
+# manifest
+# .manifest
+# poetry.lock
 
-/manifest
-/.manifest
-/poetry.lock
+# /manifest
+# /.manifest
+# /poetry.lock
 
 
 

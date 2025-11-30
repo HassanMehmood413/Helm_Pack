@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: proj-2
+data:
+  POSTGRES_DB: proj2_db
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres123

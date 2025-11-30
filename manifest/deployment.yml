@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: proj-2
+  namespace: proj-2
+spec:
+  replicas: 2
+  selector: 
+    matchLabels:
+      app: proj-2
+  template:
+    metadata:
+      labels:
+        app: proj-2
+    spec:
+      containers:
+        - name: proj-2
+          image: hm413/proj-3:latest
+          env:
+            - name: DATABASE_URL
+              value: postgresql://postgres:postgres123@postgres-service:5432/proj2_db
+          ports:
+            - containerPort: 8000
