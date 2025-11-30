@@ -1,0 +1,42 @@
+# Production Environment Values
+# Override for production deployment
+
+replicaCount: 3
+
+image:
+  repository: hm413/helm-proj01
+  pullPolicy: IfNotPresent
+  tag: "0.1.1"  # NEVER use 'latest' in production!
+
+service:
+  type: LoadBalancer  # Or ClusterIP with Ingress
+  port: 8080
+  targetPort: 8000
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+# PostgreSQL for production (more resources)
+postgresql:
+  enabled: true
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    size: 5Gi  # Larger storage for production
+    storageClass: ""  # Use your production storage class

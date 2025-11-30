@@ -1,0 +1,35 @@
+# Development Environment Values
+# Override for dev deployment
+
+replicaCount: 1
+
+image:
+  repository: hm413/helm-proj01
+  pullPolicy: Always  # Always pull latest for dev
+  tag: "0.1.1"
+
+service:
+  type: NodePort  # Easy access for local testing
+  port: 8080
+  targetPort: 8000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# PostgreSQL for dev (smaller resources)
+postgresql:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  persistence:
+    size: 500Mi  # Smaller storage for dev

@@ -1,0 +1,51 @@
+🚀 Successfully deployed proj_01!
+
+Your application and PostgreSQL database have been deployed to namespace: {{ .Release.Namespace }}
+
+📊 RESOURCES CREATED:
+- Application Deployment: {{ include "proj_01_helm.fullname" . }} ({{ .Values.replicaCount }} replicas)
+- Application Service: {{ include "proj_01_helm.fullname" . }} ({{ .Values.service.type }})
+{{- if .Values.postgresql.enabled }}
+- PostgreSQL Deployment: postgres
+- PostgreSQL Service: {{ .Values.postgresql.service.name }}
+- PostgreSQL PVC: {{ .Values.postgresql.persistence.claimName }} ({{ .Values.postgresql.persistence.size }})
+{{- end }}
+
+🔍 CHECK STATUS:
+  kubectl get all -n {{ .Release.Namespace }}
+
+📡 ACCESS YOUR APPLICATION:
+{{- if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "proj_01_helm.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "Application URL: http://$NODE_IP:$NODE_PORT"
+{{- else if contains "LoadBalancer" .Values.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+  
+  kubectl get svc --namespace {{ .Release.Namespace }} -w {{ include "proj_01_helm.fullname" . }}
+  
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "proj_01_helm.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo "Application URL: http://$SERVICE_IP:{{ .Values.service.port }}"
+{{- else if contains "ClusterIP" .Values.service.type }}
+  # Option 1: Port Forward
+  kubectl port-forward svc/{{ include "proj_01_helm.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+  echo "Application URL: http://localhost:8080"
+  
+  # Option 2: Access from within cluster
+  echo "Internal URL: http://{{ include "proj_01_helm.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
+{{- end }}
+
+📝 VIEW LOGS:
+  # Application logs
+  kubectl logs -l app.kubernetes.io/name={{ include "proj_01_helm.name" . }} -n {{ .Release.Namespace }} --tail=50 -f
+  
+{{- if .Values.postgresql.enabled }}
+  # PostgreSQL logs
+  kubectl logs -l app=postgres -n {{ .Release.Namespace }} --tail=50 -f
+{{- end }}
+
+🔧 NEXT STEPS:
+  helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
+  helm get values {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+Happy coding! 🎉

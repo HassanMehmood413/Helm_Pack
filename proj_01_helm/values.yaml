@@ -1,0 +1,133 @@
+# Default values for proj_01_helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#############################
+# Application Configuration
+#############################
+
+# Application replicas
+replicaCount: 2
+
+# Application image
+image:
+  repository: hm413/helm-proj01
+  pullPolicy: IfNotPresent
+  tag: "0.1.1 "
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "proj-2"
+
+# Application service
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8000
+
+# Application environment variables
+env:
+  databaseUrl: "postgresql://postgres:postgres123@postgres-service:5432/proj2_db"
+
+# Resource limits for the application
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Disable health probes for now (can enable if your app has health endpoints)
+livenessProbe:
+  enabled: false
+  # httpGet:
+  #   path: /health
+  #   port: 8000
+
+readinessProbe:
+  enabled: false
+  # httpGet:
+  #   path: /ready
+  #   port: 8000
+
+# Service account
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+# Autoscaling (disabled by default)
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# Ingress (disabled by default)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+#############################
+# PostgreSQL Configuration
+#############################
+
+postgresql:
+  # Enable or disable PostgreSQL deployment
+  enabled: true
+  
+  # PostgreSQL image
+  image:
+    repository: postgres
+    tag: "16-alpine"
+    pullPolicy: IfNotPresent
+  
+  # PostgreSQL database configuration
+  auth:
+    database: proj2_db
+    username: postgres
+    password: postgres123
+  
+  # PostgreSQL service
+  service:
+    name: postgres-service
+    type: ClusterIP
+    port: 5432
+  
+  # PostgreSQL persistent storage
+  persistence:
+    enabled: true
+    storageClass: ""  # Use default storage class
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    claimName: postgres-pvc
+  
+  # PostgreSQL resources
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  # PostgreSQL replicas (always 1 for stateful database)
+  replicaCount: 1
